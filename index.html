@@ -358,16 +358,21 @@
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
+        // 通知其他頁面會員已被刪除
+        localStorage.setItem('memberDeleted', 'true');
+
         // 清除所有儲存的會員資料
         sessionStorage.removeItem('phone');
         localStorage.removeItem('phone');
+        sessionStorage.removeItem('name');
+        localStorage.removeItem('name');        
         sessionStorage.removeItem('authToken');
         localStorage.removeItem('authToken');
         
         alert('會員帳號已成功刪除');
         
         // 重導向到登入頁面或首頁
-        window.location.href = 'index.html';
+        window.location.href = 'https://two0250811-1.onrender.com';
         
       } catch (error) {
         console.error('刪除會員帳號失敗:', error);
@@ -507,4 +512,5 @@
     }
   </script>
 </body>
+
 </html>
