@@ -219,7 +219,7 @@
     <div class="note">若有問題請聯絡客服</div>
     <div class="login-link">
       已有帳號？
-      <a href="https://two0250826-takeoutweb.onrender.com">返回登入</a>
+      <a href="https://two0250811-1.onrender.com">返回登入</a>
     </div>
   </div>
 
@@ -340,7 +340,7 @@
       }
     }
 
-    // 刪除會員帳號
+    // 刪除會員帳號（修改後的函數）
     async function deleteMemberAccount() {
       const memberPhone = getMemberId();
       
@@ -358,21 +358,26 @@
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        // 通知其他頁面會員已被刪除
-        localStorage.setItem('memberDeleted', 'true');
+        const result = await response.json();
+        console.log('刪除結果:', result);
 
-        // 清除所有儲存的會員資料
-        sessionStorage.removeItem('phone');
-        localStorage.removeItem('phone');
-        sessionStorage.removeItem('name');
-        localStorage.removeItem('name');        
-        sessionStorage.removeItem('authToken');
-        localStorage.removeItem('authToken');
+        // 完全清除所有登入相關的儲存資料
+        sessionStorage.clear();
+        localStorage.clear();
         
-        alert('會員帳號已成功刪除');
+        // 清除所有可能的cookies（如果有使用）
+        document.cookie.split(";").forEach(function(c) { 
+          document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+        });
         
-        // 重導向到登入頁面或首頁
-        window.location.href = 'https://two0250811-1.onrender.com';
+        // alert(`會員帳號已成功刪除\n刪除了 ${result.deleted_orders || 0} 筆歷史訂單`);
+        
+        // 設置刪除標記，通知其他頁面
+        sessionStorage.setItem('accountDeleted', 'true');
+        localStorage.setItem('accountDeleted', 'true');
+        
+        // 強制跳轉到首頁並確保頁面重新載入
+        window.location.replace('https://two0250811-1.onrender.com?logout=true');
         
       } catch (error) {
         console.error('刪除會員帳號失敗:', error);
@@ -380,6 +385,68 @@
         throw error;
       }
     }
+
+    // 確保頁面載入時檢查是否已登出
+    window.addEventListener('beforeunload', function() {
+      // 如果正在執行刪除操作，確保清除所有資料
+      if (window.isDeletingAccount) {
+        sessionStorage.clear();
+        localStorage.clear();
+      }
+    });
+
+    // 修改確認刪除的事件處理
+    // 在 DOMContentLoaded 事件中的確認刪除部分修改為：
+    // 確認刪除
+    confirmDelete.addEventListener('click', async function() {
+      confirmDelete.disabled = true;
+      confirmDelete.textContent = '刪除中...';
+      
+      // 設置刪除狀態標記
+      window.isDeletingAccount = true;
+      
+      try {
+        await deleteMemberAccount();
+      } catch (error) {
+        // 錯誤已在deleteMemberAccount中處理
+      } finally {
+        confirmDelete.disabled = false;
+        confirmDelete.textContent = '確認刪除';
+        hideDeleteModal();
+        window.isDeletingAccount = false;
+      }
+    });
+
+    // 確保頁面載入時檢查是否已登出
+    window.addEventListener('beforeunload', function() {
+      // 如果正在執行刪除操作，確保清除所有資料
+      if (window.isDeletingAccount) {
+        sessionStorage.clear();
+        localStorage.clear();
+      }
+    });
+
+    // 修改確認刪除的事件處理
+    // 在 DOMContentLoaded 事件中的確認刪除部分修改為：
+    // 確認刪除
+    confirmDelete.addEventListener('click', async function() {
+      confirmDelete.disabled = true;
+      confirmDelete.textContent = '刪除中...';
+      
+      // 設置刪除狀態標記
+      window.isDeletingAccount = true;
+      
+      try {
+        await deleteMemberAccount();
+      } catch (error) {
+        // 錯誤已在deleteMemberAccount中處理
+      } finally {
+        confirmDelete.disabled = false;
+        confirmDelete.textContent = '確認刪除';
+        hideDeleteModal();
+        window.isDeletingAccount = false;
+      }
+    });
 
     // 顯示錯誤訊息
     function showError(message) {
@@ -512,5 +579,4 @@
     }
   </script>
 </body>
-
 </html>
