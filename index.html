@@ -311,7 +311,7 @@
     // 儲存會員資料
     async function saveMemberData(formData) {
       const memberPhone = getMemberId();
-      
+
       try {
         const response = await fetch(`https://two0250811-2.onrender.com/api/member/${memberPhone}`, {
           method: 'PUT',
@@ -320,36 +320,31 @@
           },
           body: JSON.stringify(formData)
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const result = await response.json();
-        
-        // 🔥 成功儲存後,設置登出標記
-        sessionStorage.setItem('memberDataUpdated', 'true');
-        
-        showSuccess('資料更新成功!即將返回首頁...');
-        
-        // 🔥 更新成功後保持登入狀態 → 更新現有登入資訊
-        sessionStorage.setItem('phone', formData.phone);
-        sessionStorage.setItem('name', formData.name);
-        localStorage.setItem('phone', formData.phone);
-        localStorage.setItem('name', formData.name);
-        
+
+        // ✅ 成功後更新登入狀態
+        sessionStorage.setItem("phone", formData.phone);
+        sessionStorage.setItem("name", formData.name);
+        localStorage.setItem("phone", formData.phone);
+        localStorage.setItem("name", formData.name);
+
         showSuccess('資料更新成功！即將返回首頁...');
-        
-        // ✅ 2秒後跳轉回外帶首頁，但仍保持登入
+
+        // ✅ 返回外帶首頁（已更新UI）
         setTimeout(() => {
           window.location.href = 'https://two0250826-takeoutweb.onrender.com';
-        }, 2000);
-        
+        }, 1500);
+
         return result;
-        
+
       } catch (error) {
         console.error('儲存會員資料失敗:', error);
-        showError('儲存失敗,請稍後再試');
+        showError('儲存失敗，請稍後再試');
         throw error;
       }
     }
@@ -528,4 +523,3 @@
   </script>
 </body>
 </html>
-
