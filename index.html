@@ -110,11 +110,12 @@
       color: #66b;
       text-decoration: none;
       transition: all 0.2s;
+      font-weight: normal;
     }
 
     .login-link a:hover {
       text-decoration: underline;
-      color: #66b;
+      color: #4455aa;
     }
 
     .loading {
@@ -215,12 +216,14 @@
 
       <button type="submit" id="saveButton">儲存變更</button>
       
-      <button type="button" id="backButton" class="back-button">← 返回點餐</button>
-      
       <button type="button" id="deleteButton" class="delete-button">🗑️ 刪除會員帳號</button>
     </form>
     
     <div class="note">若有問題請聯絡客服</div>
+    <div class="login-link">
+      已有帳號?
+      <a href="https://two0250826-takeoutweb.onrender.com" id="backLink">返回登入</a>
+    </div>
   </div>
 
   <!-- 刪除確認對話框 -->
@@ -421,25 +424,23 @@
     document.addEventListener('DOMContentLoaded', function() {
       const form = document.getElementById('memberForm');
       const saveButton = document.getElementById('saveButton');
-      const backButton = document.getElementById('backButton');
+      const backLink = document.getElementById('backLink');
       const deleteButton = document.getElementById('deleteButton');
       const deleteModal = document.getElementById('deleteModal');
       const cancelDelete = document.getElementById('cancelDelete');
       const confirmDelete = document.getElementById('confirmDelete');
       
-      // 🔥 返回按鈕處理
-      backButton.addEventListener('click', function() {
-        // 如果沒有編輯過,保持登入狀態直接返回
-        if (!hasEdited) {
-          console.log('未編輯,保持登入狀態返回');
-          window.location.href = 'https://two0250826-takeoutweb.onrender.com';
-        } else {
-          // 如果有編輯但沒儲存,提示用戶
-          if (confirm('您有未儲存的變更,確定要離開嗎?')) {
-            console.log('有編輯但未儲存,返回並保持登入');
-            window.location.href = 'https://two0250826-takeoutweb.onrender.com';
+      // 🔥 返回連結處理
+      backLink.addEventListener('click', function(e) {
+        // 如果有編輯但沒儲存,提示用戶
+        if (hasEdited) {
+          if (!confirm('您有未儲存的變更,確定要離開嗎?')) {
+            e.preventDefault(); // 阻止跳轉
+            return;
           }
         }
+        // 沒編輯過,或確認離開 → 保持登入狀態返回
+        console.log('返回首頁,保持登入狀態');
       });
       
       // 儲存表單處理
