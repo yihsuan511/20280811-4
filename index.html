@@ -332,14 +332,16 @@
         
         showSuccess('資料更新成功!即將返回首頁...');
         
-        // 🔥 2秒後清除登入資料並跳轉
+        // 🔥 更新成功後保持登入狀態 → 更新現有登入資訊
+        sessionStorage.setItem('phone', formData.phone);
+        sessionStorage.setItem('name', formData.name);
+        localStorage.setItem('phone', formData.phone);
+        localStorage.setItem('name', formData.name);
+        
+        showSuccess('資料更新成功！即將返回首頁...');
+        
+        // ✅ 2秒後跳轉回外帶首頁，但仍保持登入
         setTimeout(() => {
-          sessionStorage.removeItem('phone');
-          sessionStorage.removeItem('name');
-          localStorage.removeItem('phone');
-          localStorage.removeItem('name');
-          
-          // 跳轉到外帶首頁
           window.location.href = 'https://two0250826-takeoutweb.onrender.com';
         }, 2000);
         
@@ -526,3 +528,4 @@
   </script>
 </body>
 </html>
+
